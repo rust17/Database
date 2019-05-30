@@ -257,6 +257,14 @@ class Builder
 	}
 
 	/**
+	 * 释放资源
+	 */
+	protected function releaseResource()
+	{
+		unset($this->whereClause);
+	}
+
+	/**
 	 * 根据主键查询一条记录 或 根据多个主键查询多条记录
 	 *
 	 * @return array
@@ -267,7 +275,9 @@ class Builder
 
 		// $receive 是一维数组 且 $receive 有一个值
 		if ($this->array_dim($receive) === 1 && count($receive) === 1) {
-			return $this->whereKey($receive[0])->decideWhichSelect()->connect->get();
+			$result = $this->whereKey($receive[0])->decideWhichSelect()->connect->get();
+			$this->releaseResource();
+			return $result;
 		}
 		// $receive 是二维数组 且 $receive[0] 有一个值
 		if ($this->array_dim($receive) === 2 && count($receive[0]) === 1) {
@@ -294,7 +304,9 @@ class Builder
 			return $this->model;
 		}
 
-		return $this->whereKey($ids)->decideWhichSelect()->connect->get();
+		$result = $this->whereKey($ids)->decideWhichSelect()->connect->get();
+		$this->releaseResource();
+		return $result;
 	}
 
 	/**
@@ -314,7 +326,9 @@ class Builder
 	 */
 	public function get()
 	{
-		return $this->decideWhichSelect()->connect->get();
+		$result = $this->decideWhichSelect()->connect->get();
+		$this->releaseResource();
+		return $result;
 	}
 
 	/**
@@ -324,7 +338,9 @@ class Builder
 	 */
 	public function count()
 	{
-		return $this->decideWhichSelect()->connect->count();
+		$result = $this->decideWhichSelect()->connect->count();
+		$this->releaseResource();
+		return $result;
 	}
 
 	/**
@@ -334,7 +350,9 @@ class Builder
 	 */
 	public function exists()
 	{
-		return ($this->decideWhichSelect()->connect->count() === 0) ? false : true;
+		$result = $this->decideWhichSelect()->connect->count();
+		$this->releaseResource();
+		return ($result === 0) ? false : true;
 	}
 
 	/**

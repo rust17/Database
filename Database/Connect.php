@@ -30,9 +30,9 @@ class Connect
 	 */
 	public function __construct($builder)
 	{
-		global $instance;
+		global $empire;
 
-		$this->db  	   = $instance;
+		$this->db  	   = $empire;
 		
 		$this->builder = $builder;
 	}
@@ -48,15 +48,7 @@ class Connect
 		while ($one = $this->db->fetch($query)) {
 			array_push($this->res, $one);
 		}
-		// 如果结果只有一条，默认返回单个实例
-		if (count($this->res) === 1) {
-			foreach ($this->res as $key => $value) {
-				$this->builder->model->$key = $value;
-			}
-
-			return $this->builder->model;
-		}
-		// 如果结果有多个，默认返回数组
+		// 返回数组
 		return $this->res;
 	}
 
